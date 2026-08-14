@@ -1,83 +1,114 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>Binary Clock</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Binary Clock</title>
 
-<style>
-    body {
-        margin: 0;
-        height: 100vh;
-        background: #000;
+    <style>
+        * {
+            box-sizing: border-box;
+        }
 
-        display: flex;
-        justify-content: center;
-        align-items: center;
-    }
+        html,
+        body {
+            width: 100%;
+            height: 100%;
+            margin: 0;
+        }
 
-    #clock {
-        display: grid;
-        grid-template-columns: repeat(6, 28px);
-        grid-template-rows: repeat(4, 28px);
-        gap: 10px;
-    }
+        body {
+            background: #2b2a33;
 
-    .dot {
-        width: 28px;
-        height: 28px;
-        border-radius: 50%;
-        background: #181818;
-    }
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
 
-    .on {
-        background: #fff;
-    }
-</style>
+        #clock {
+            display: grid;
+
+            grid-template-columns: repeat(6, 28px);
+            grid-template-rows: repeat(4, 28px);
+
+            gap: 10px;
+        }
+
+        .dot {
+            width: 28px;
+            height: 28px;
+
+            border-radius: 50%;
+
+            background: #1c1b22;
+
+            transition:
+                background 0.15s ease,
+                box-shadow 0.15s ease;
+        }
+
+        .on {
+            background: #fff;
+
+            box-shadow:
+                0 0 5px #fff,
+                0 0 12px rgba(255, 255, 255, 0.65),
+                0 0 20px rgba(255, 255, 255, 0.3);
+        }
+    </style>
 </head>
 
 <body>
 
-<div id="clock"></div>
+    <div id="clock"></div>
 
-<script>
-function updateClock() {
-    const now = new Date();
+    <script>
+        function updateClock() {
+            const now = new Date();
 
-    let h = now.getHours();
-    const m = now.getMinutes();
-    const s = now.getSeconds();
+            // 12-hour format
+            let hours = now.getHours();
+            hours = hours % 12 || 12;
 
-    h = h % 12 || 12;
+            const minutes = now.getMinutes();
+            const seconds = now.getSeconds();
 
-    const digits = [
-        Math.floor(h / 10),
-        h % 10,
-        Math.floor(m / 10),
-        m % 10,
-        Math.floor(s / 10),
-        s % 10
-    ];
+            // H H M M S S
+            const digits = [
+                Math.floor(hours / 10),
+                hours % 10,
 
-    const clock = document.getElementById("clock");
-    clock.innerHTML = "";
+                Math.floor(minutes / 10),
+                minutes % 10,
 
-    for (let bit = 3; bit >= 0; bit--) {
-        for (const digit of digits) {
-            const dot = document.createElement("div");
-            dot.className = "dot";
+                Math.floor(seconds / 10),
+                seconds % 10
+            ];
 
-            if ((digit >> bit) & 1) {
-                dot.classList.add("on");
+            const clock = document.getElementById("clock");
+
+            clock.innerHTML = "";
+
+            // Binary rows: 8, 4, 2, 1
+            for (let bit = 3; bit >= 0; bit--) {
+                for (const digit of digits) {
+                    const dot = document.createElement("div");
+
+                    dot.classList.add("dot");
+
+                    if ((digit >> bit) & 1) {
+                        dot.classList.add("on");
+                    }
+
+                    clock.appendChild(dot);
+                }
             }
-
-            clock.appendChild(dot);
         }
-    }
-}
 
-updateClock();
-setInterval(updateClock, 1000);
-</script>
+        updateClock();
+
+        setInterval(updateClock, 1000);
+    </script>
 
 </body>
 </html>
