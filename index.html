@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Binary Clock</title>
+
+<style>
+    body {
+        margin: 0;
+        height: 100vh;
+        background: #000;
+
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    #clock {
+        display: grid;
+        grid-template-columns: repeat(6, 28px);
+        grid-template-rows: repeat(4, 28px);
+        gap: 10px;
+    }
+
+    .dot {
+        width: 28px;
+        height: 28px;
+        border-radius: 50%;
+        background: #181818;
+    }
+
+    .on {
+        background: #fff;
+    }
+</style>
+</head>
+
+<body>
+
+<div id="clock"></div>
+
+<script>
+function updateClock() {
+    const now = new Date();
+
+    let h = now.getHours();
+    const m = now.getMinutes();
+    const s = now.getSeconds();
+
+    h = h % 12 || 12;
+
+    const digits = [
+        Math.floor(h / 10),
+        h % 10,
+        Math.floor(m / 10),
+        m % 10,
+        Math.floor(s / 10),
+        s % 10
+    ];
+
+    const clock = document.getElementById("clock");
+    clock.innerHTML = "";
+
+    for (let bit = 3; bit >= 0; bit--) {
+        for (const digit of digits) {
+            const dot = document.createElement("div");
+            dot.className = "dot";
+
+            if ((digit >> bit) & 1) {
+                dot.classList.add("on");
+            }
+
+            clock.appendChild(dot);
+        }
+    }
+}
+
+updateClock();
+setInterval(updateClock, 1000);
+</script>
+
+</body>
+</html>
