@@ -15,17 +15,22 @@
             width: 100%;
             height: 100%;
             margin: 0;
+            padding: 0;
         }
 
         body {
             background: #2b2a33;
-
-            display: flex;
-            justify-content: center;
-            align-items: center;
+            overflow: hidden;
         }
 
         #clock {
+            position: absolute;
+
+            top: 45%;
+            left: 50%;
+
+            transform: translate(-50%, -50%);
+
             display: grid;
 
             grid-template-columns: repeat(6, 28px);
@@ -77,10 +82,8 @@
             const digits = [
                 Math.floor(hours / 10),
                 hours % 10,
-
                 Math.floor(minutes / 10),
                 minutes % 10,
-
                 Math.floor(seconds / 10),
                 seconds % 10
             ];
