@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <title>New Tab</title>
 
     <style>
@@ -71,19 +72,57 @@
         function updateClock() {
             const now = new Date();
 
-            // 12-hour format
-            let hours = now.getHours();
-            hours = hours % 12 || 12;
+            /*
+                JavaScript automatically uses the computer's
+                local timezone.
 
+                Example:
+                Kuwait  → Kuwait time
+                Egypt   → Egypt time
+                Japan   → Japan time
+                USA     → local US time
+            */
+
+            let hours = now.getHours();
             const minutes = now.getMinutes();
             const seconds = now.getSeconds();
 
-            // H H M M S S
+            /*
+                Convert 24-hour time to 12-hour time.
+
+                00 → 12
+                01 → 1
+                ...
+                11 → 11
+                12 → 12
+                13 → 1
+                ...
+                23 → 11
+            */
+
+            hours = hours % 12 || 12;
+
+            /*
+                Six decimal digits:
+
+                H H M M S S
+
+                Example:
+
+                12:34:56
+
+                becomes:
+
+                [1, 2, 3, 4, 5, 6]
+            */
+
             const digits = [
                 Math.floor(hours / 10),
                 hours % 10,
+
                 Math.floor(minutes / 10),
                 minutes % 10,
+
                 Math.floor(seconds / 10),
                 seconds % 10
             ];
@@ -92,12 +131,27 @@
 
             clock.innerHTML = "";
 
-            // Binary rows: 8, 4, 2, 1
+            /*
+                Four binary rows:
+
+                8
+                4
+                2
+                1
+            */
+
             for (let bit = 3; bit >= 0; bit--) {
+
                 for (const digit of digits) {
+
                     const dot = document.createElement("div");
 
                     dot.classList.add("dot");
+
+                    /*
+                        Check whether this binary bit
+                        is active for the current digit.
+                    */
 
                     if ((digit >> bit) & 1) {
                         dot.classList.add("on");
@@ -108,9 +162,43 @@
             }
         }
 
+
+        /*
+            Update immediately.
+        */
+
         updateClock();
 
-        setInterval(updateClock, 1000);
+
+        /*
+            Synchronize updates with the real beginning
+            of each second.
+
+            This avoids starting the interval at something
+            like 12:34:56.743 and updating at .743 every second.
+        */
+
+        function startClock() {
+
+            const now = new Date();
+
+            const millisecondsUntilNextSecond =
+                1000 - now.getMilliseconds();
+
+            setTimeout(() => {
+
+                updateClock();
+
+                /*
+                    Once synchronized, update every second.
+                */
+
+                setInterval(updateClock, 1000);
+
+            }, millisecondsUntilNextSecond);
+        }
+
+        startClock();
     </script>
 
 </body>
